@@ -1,0 +1,380 @@
+{
+  "name": "Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -200,
+        0
+      ],
+      "id": "c94202e0-8c44-4b26-8f85-96102e424d18",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Your job is to take the input and reply to it.\nInput message is  {{ $json.data.text }}\nIF {{ $json.data.text }} =1 , then reply: 💔 I’m really sorry you’re feeling down today. You don’t have to go through this alone — I’m here for you 🫂. Maybe try some deep breaths, journaling, or a short walk 🌿. Sending you a warm virtual hug 🤗💛\nIf {{ $json.data.text }}=2, then reply: 🌧️ Tough day, huh? It’s okay to have off days — you're doing better than you think. Be gentle with yourself today. Maybe take a break, listen to some lo-fi, or talk to a friend 🎧☁️. You matter, and brighter days are coming 🌈💫\nIF {{ $json.data.text }} =3 , then reply: 😶 Feeling kinda meh is totally valid. Not every day is meant to be a highlight reel. Maybe a little self-care or fun distraction can help? 🎨📚 Keep going — even just showing up is a win today 🏆💖\nIF {{ $json.data.text }} =4 , then reply: 😊 Love to hear that! Seems like today’s treating you fairly well 🌼 Keep riding that wave. Stay hydrated, celebrate the small wins, and pass on the good vibes ✨💌\nIF {{ $json.data.text }} =5, then reply:🔥 Yesss, you're vibing high today and we LOVE to see it! Keep that energy flowing 💃🏽💫 Remember — your glow might just inspire someone else too 💥🚀\n",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        300,
+        0
+      ],
+      "id": "b643b5d8-7f58-44b4-bd55-260b990acc43",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "mindcraft-gpt4o",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        260,
+        200
+      ],
+      "id": "debd876c-61b1-40cb-88e3-e02989a390c8",
+      "name": "Azure OpenAI Chat Model",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "mUCMNFIery8ZaNEK",
+          "name": "Azure Open AI account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7110553942",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        740,
+        0
+      ],
+      "id": "fa8459f4-a723-4347-9c5a-f34e2def09e5",
+      "name": "Telegram1",
+      "webhookId": "e416199a-493a-4dd7-a094-01eaabf5819f",
+      "credentials": {
+        "telegramApi": {
+          "id": "n60ys7XWOtWipNOK",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ut15L9AZvMazxVAU14eAUPGGZ1-5o9MPcvFJdCgr4FQ",
+          "mode": "list",
+          "cachedResultName": "MENTAL HEALTH",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ut15L9AZvMazxVAU14eAUPGGZ1-5o9MPcvFJdCgr4FQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ut15L9AZvMazxVAU14eAUPGGZ1-5o9MPcvFJdCgr4FQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "DATE ": "={{ new Date().toLocaleDateString(\"en-IN\", { timeZone: \"Asia/Kolkata\" }) }}",
+            "TIME": "{{ new Date().toLocaleTimeString(\"en-IN\", { timeZone: \"Asia/Kolkata\" }) }}",
+            "RESPONSE BY USER": "={{ $('Ask about how you are feeling on a scale(1-5)').item.json.data.text }}",
+            "REPLIED": "={{ $json.result.text }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "DATE ",
+              "displayName": "DATE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TIME",
+              "displayName": "TIME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RESPONSE BY USER",
+              "displayName": "RESPONSE BY USER",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "REPLIED",
+              "displayName": "REPLIED",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1000,
+        0
+      ],
+      "id": "6bac0fb6-d11e-46f5-b67b-3c5c1fbdd62e",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1sh9Rrc9faJQpQzA",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -140,
+        360
+      ],
+      "id": "98f8dd60-ff2c-438a-be0a-51febd4e13cf",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ut15L9AZvMazxVAU14eAUPGGZ1-5o9MPcvFJdCgr4FQ",
+          "mode": "list",
+          "cachedResultName": "MENTAL HEALTH",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ut15L9AZvMazxVAU14eAUPGGZ1-5o9MPcvFJdCgr4FQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ut15L9AZvMazxVAU14eAUPGGZ1-5o9MPcvFJdCgr4FQ/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        80,
+        360
+      ],
+      "id": "c909debd-481d-41a0-ab3b-0d385ce0a343",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1sh9Rrc9faJQpQzA",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const scores = items\n  .map(item => parseInt(item.json['RESPONSE BY USER']))\n  .filter(score => !isNaN(score));\n\nconst average = scores.reduce((a, b) => a + b, 0) / scores.length || 0;\n\nreturn [{\n  json: {\n    totalCheckins: scores.length,\n    averageMood: average.toFixed(2),\n    message: Hey Aarushi 🌸\\n\\nYou completed ${scores.length} mood check-ins this week.\\nYour average mood score was ${average.toFixed(2)}.\\nKeep going — you're doing great 💪💜\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        300,
+        360
+      ],
+      "id": "531d09d4-b438-4839-af52-44a04fc4541a",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "fromEmail": "aarushigarg6629@gmail.com",
+        "toEmail": "aiaarushi725@gmail.com",
+        "subject": "WEEKLY SUMMARY MOODS REPORT",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        360
+      ],
+      "id": "9ad98d5e-d919-4511-9b35-9dba03c41ca6",
+      "name": "Send Email",
+      "webhookId": "69da0e56-df51-4203-82fe-912c422c2f03",
+      "credentials": {
+        "smtp": {
+          "id": "wX13BZU0dEOo3p3v",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "7110553942",
+        "message": "🌈 Hey you! Just wanted to check in 💛  \nHow’s your vibe today on a scale of 1️⃣ (kinda meh) to 5️⃣ (absolutely thriving)?  \n\nNo pressure — just a quick mental check-in 🧠✨  \nYour feelings are valid. I'm here for you 💬💖",
+        "responseType": "freeText",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        20,
+        0
+      ],
+      "id": "f8a73465-cede-4ac6-82a7-7a0163fc5b15",
+      "name": "Ask about how you are feeling on a scale(1-5)",
+      "webhookId": "67f4fb3c-757e-4bb2-a472-e17670ef1f2d",
+      "credentials": {
+        "telegramApi": {
+          "id": "n60ys7XWOtWipNOK",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Ask about how you are feeling on a scale(1-5)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Azure OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask about how you are feeling on a scale(1-5)": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "01bcbde4-d02c-4eef-ae86-31e999a7b112",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a330f3ff97d33d9cf16d8d9cd1fd825da0396f17f21182e570026f2227916a9d"
+  },
+  "id": "sdcLVCwb5J1pXoIA",
+  "tags": []
+}
